@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strona w budowie | Już wkrótce</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --text-color: #1f2937;
+            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .icon-box svg {
+            width: 80px;
+            height: 80px;
+            fill: var(--primary-color);
+            animation: drift 3s ease-in-out infinite;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: #4b5563;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #dbeafe;
+            color: var(--primary-color);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 65%; /* Przykładowy postęp */
+            background: var(--primary-color);
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+        }
+
+        .contact-info {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .contact-info a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Dekoracyjne bąbelki w tle */
+        .circles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .circles li {
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 20px;
+            background: rgba(37, 99, 235, 0.1);
+            animation: animate 25s linear infinite;
+            bottom: -150px;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes animate {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
+            100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
+        }
+
+        /* Responsywność */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .container { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <ul class="circles">
+        <li style="left: 25%; width: 80px; height: 80px; animation-delay: 0s;"></li>
+        <li style="left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s;"></li>
+        <li style="left: 70%; width: 20px; height: 20px; animation-delay: 4s;"></li>
+        <li style="left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s;"></li>
+        <li style="left: 65%; width: 20px; height: 20px; animation-delay: 0s;"></li>
+        <li style="left: 75%; width: 110px; height: 110px; animation-delay: 3s;"></li>
+    </ul>
+
+    <div class="container">
+        <div class="status-badge">Prace serwisowe</div>
+        
+        <div class="icon-box">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+            </svg>
+        </div>
+
+        <h1>Już wkrótce!</h1>
+        <p>Nasza strona internetowa jest w trakcie budowy. Pracujemy intensywnie, aby dostarczyć Ci najlepsze doświadczenia. Zapraszamy ponownie niedługo!</p>
+        
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+
+        <div class="contact-info">
+            Masz pytania? Napisz do nas: <br>
+            <a href="mailto:kontakt@twojadomena.pl">kontakt@twojadomena.pl</a>
+        </div>
+    </div>
+
+</body>
+</html>
