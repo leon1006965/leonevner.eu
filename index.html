@@ -3,180 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strona w budowie | Już wkrótce</title>
+    <title>Szwecja - Perła Skandynawii | Pobierz Prezentację</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --text-color: #1f2937;
-            --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background: var(--bg-gradient);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-color);
-            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
         }
-
-        .container {
-            text-align: center;
-            padding: 2rem;
-            max-width: 600px;
-            width: 90%;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1;
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .icon-box {
-            margin-bottom: 1.5rem;
+        .swedish-gradient {
+            background: linear-gradient(135deg, #006aa7 0%, #fecc00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        .icon-box svg {
-            width: 80px;
-            height: 80px;
-            fill: var(--primary-color);
-            animation: drift 3s ease-in-out infinite;
+        .btn-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #111827;
-        }
-
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-            color: #4b5563;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: #dbeafe;
-            color: var(--primary-color);
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 10px;
-            background: #e5e7eb;
-            border-radius: 5px;
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 65%; /* Przykładowy postęp */
-            background: var(--primary-color);
-            border-radius: 5px;
-            transition: width 1s ease-in-out;
-        }
-
-        .contact-info {
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
-        .contact-info a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        /* Dekoracyjne bąbelki w tle */
-        .circles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 0;
-        }
-
-        .circles li {
-            position: absolute;
-            display: block;
-            list-style: none;
-            width: 20px;
-            height: 20px;
-            background: rgba(37, 99, 235, 0.1);
-            animation: animate 25s linear infinite;
-            bottom: -150px;
-        }
-
-        @keyframes drift {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        @keyframes animate {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
-            100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
-        }
-
-        /* Responsywność */
-        @media (max-width: 480px) {
-            h1 { font-size: 1.8rem; }
-            .container { padding: 1.5rem; }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <ul class="circles">
-        <li style="left: 25%; width: 80px; height: 80px; animation-delay: 0s;"></li>
-        <li style="left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s;"></li>
-        <li style="left: 70%; width: 20px; height: 20px; animation-delay: 4s;"></li>
-        <li style="left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s;"></li>
-        <li style="left: 65%; width: 20px; height: 20px; animation-delay: 0s;"></li>
-        <li style="left: 75%; width: 110px; height: 110px; animation-delay: 3s;"></li>
-    </ul>
+    <div class="max-w-2xl w-full">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <div class="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest uppercase bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20">
+                Prezentacja Multimedialna
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                Szwecja: <span class="swedish-gradient">Perła Skandynawii</span>
+            </h1>
+            <p class="text-slate-400 text-lg">Wybierz format i pobierz materiały edukacyjne o królestwie Szwecji.</p>
+        </header>
 
-    <div class="container">
-        <div class="status-badge">Prace serwisowe</div>
-        
-        <div class="icon-box">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-            </svg>
-        </div>
+        <!-- Main Card -->
+        <main class="glass-card rounded-3xl p-8 md:p-10 shadow-2xl">
+            
+            <!-- Format Selector -->
+            <div class="mb-8">
+                <label class="block text-sm font-medium text-slate-400 mb-4 text-center">WYBIERZ FORMAT PLIKU</label>
+                <div class="flex p-1 bg-slate-800/50 rounded-xl gap-1">
+                    <button id="btn-pptx" onclick="setFormat('pptx')" class="flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 bg-blue-600 text-white">
+                        PowerPoint (.pptx)
+                    </button>
+                    <button id="btn-pdf" onclick="setFormat('pdf')" class="flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 text-slate-400 hover:bg-slate-700/50">
+                        Dokument PDF (.pdf)
+                    </button>
+                </div>
+            </div>
 
-        <h1>Już wkrótce!</h1>
-        <p>Nasza strona internetowa jest w trakcie budowy. Pracujemy intensywnie, aby dostarczyć Ci najlepsze doświadczenia. Zapraszamy ponownie niedługo!</p>
-        
-        <div class="progress-container">
-            <div class="progress-bar"></div>
-        </div>
+            <!-- Download Sections -->
+            <div class="space-y-4">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Dostępne serwery (Mirrory)</h3>
+                
+                <!-- Mirror 1: Google Drive -->
+                <a id="link-gdrive" href="https://docs.google.com/presentation/d/1bVhPARs3E-tZaOXGsqfpqHOagX7fXb7E/edit?usp=sharing&ouid=107427620175872945141&rtpof=true&sd=true" target="_blank" class="btn-hover flex items-center justify-between p-5 bg-slate-800/40 border border-slate-700 rounded-2xl hover:border-blue-500/50 group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><path d="m15 19-3 3-3-3"/><path d="m15 5-3-3-3 3"/></svg>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-200 text-lg">Mirror 1: Google Drive</div>
+                            <div class="text-sm text-slate-500">Szybkie pobieranie i podgląd</div>
+                        </div>
+                    </div>
+                    <div class="text-slate-400 group-hover:text-blue-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </a>
 
-        <div class="contact-info">
-            Masz pytania? Napisz do nas: <br>
-            <a href="mailto:kontakt@twojadomena.pl">kontakt@twojadomena.pl</a>
-        </div>
+                <!-- Mirror 2: Mediafire -->
+                <a id="link-mediafire" href="https://www.mediafire.com/file/z6cna9m6811n9bo/Szwecja_+Perła+Skandynawii.pptx/file" target="_blank" class="btn-hover flex items-center justify-between p-5 bg-slate-800/40 border border-slate-700 rounded-2xl hover:border-yellow-500/50 group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center text-yellow-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </div>
+                        <div>
+                            <div class="font-bold text-slate-200 text-lg">Mirror 2: Mediafire</div>
+                            <div class="text-sm text-slate-500">Alternatywny serwer plików</div>
+                        </div>
+                    </div>
+                    <div class="text-slate-400 group-hover:text-yellow-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Info Footer -->
+            <div class="mt-8 pt-6 border-t border-slate-700/50 flex flex-wrap gap-4 justify-center text-sm text-slate-500">
+                <div class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    Skanowanie Antywirusowe: OK
+                </div>
+                <div class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Aktualizacja: 2024
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-8 text-center text-slate-600 text-xs">
+            &copy; Prezentacja o Szwecji. Wszelkie prawa zastrzeżone.
+        </footer>
     </div>
 
+    <script>
+        const links = {
+            pptx: {
+                gdrive: "https://docs.google.com/presentation/d/1bVhPARs3E-tZaOXGsqfpqHOagX7fXb7E/edit?usp=sharing&ouid=107427620175872945141&rtpof=true&sd=true",
+                mediafire: "https://www.mediafire.com/file/z6cna9m6811n9bo/Szwecja_+Perła+Skandynawii.pptx/file"
+            },
+            pdf: {
+                gdrive: "https://drive.google.com/file/d/1VhTvVWMztJ6dUaPB4UYBjCxq6-2qdx_D/view?usp=sharing",
+                mediafire: "https://www.mediafire.com/file/b9m1wtm3i1o10nf/Szwecja_+Perła+Skandynawii.pdf/file"
+            }
+        };
+
+        function setFormat(format) {
+            const btnPptx = document.getElementById('btn-pptx');
+            const btnPdf = document.getElementById('btn-pdf');
+            const linkGdrive = document.getElementById('link-gdrive');
+            const linkMediafire = document.getElementById('link-mediafire');
+
+            if (format === 'pptx') {
+                btnPptx.className = "flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 bg-blue-600 text-white";
+                btnPdf.className = "flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 text-slate-400 hover:bg-slate-700/50";
+                linkGdrive.href = links.pptx.gdrive;
+                linkMediafire.href = links.pptx.mediafire;
+            } else {
+                btnPdf.className = "flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 bg-blue-600 text-white";
+                btnPptx.className = "flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 text-slate-400 hover:bg-slate-700/50";
+                linkGdrive.href = links.pdf.gdrive;
+                linkMediafire.href = links.pdf.mediafire;
+            }
+        }
+    </script>
 </body>
 </html>
