@@ -1,171 +1,227 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Presentation</title>
+    <title>Quiz: Wiedza o Mostach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Roboto', sans-serif;
+            background-color: #1a202c;
+            color: #e2e8f0;
         }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
         }
-
-        .gradient-bg {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        .option-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
         }
-
-        .hover-lift {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .hover-lift:hover {
+        .option-card:hover {
+            background-color: #2d3748;
             transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .option-card.selected {
+            border-color: #c5a059;
+            background-color: #2d3748;
+        }
+        .option-card.correct {
+            border-color: #48bb78;
+            background-color: rgba(72, 187, 120, 0.1);
+        }
+        .option-card.wrong {
+            border-color: #f56565;
+            background-color: rgba(245, 101, 101, 0.1);
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #2d3748;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #c5a059;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <!-- Navigation -->
-    <nav class="p-6">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center text-white font-bold">D</div>
-                <span class="text-xl font-bold text-slate-800">MACZETA</span>
+    <div id="quiz-container" class="max-w-2xl w-full bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-700">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl text-center text-white mb-2">Quiz: Cuda Inżynierii</h1>
+            <p class="text-gray-400 text-center text-sm uppercase tracking-widest">Sprawdź swoją wiedzę o mostach</p>
+            <div class="mt-6 progress-bar">
+                <div id="progress" class="progress-fill" style="width: 0%"></div>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main class="flex-grow flex items-center justify-center px-4 py-12">
-        <div class="max-w-4xl w-full grid md:grid-cols-2 gap-12 items-center">
-            
-            <!-- Left Side: Info -->
-            <div class="space-y-6">
-                <div class="inline-block px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm font-semibold">
-                    Presentation Ready
-                </div>
-                <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">
-                    Your document is <span class="text-transparent bg-clip-text gradient-bg">ready for download.</span>
-                </h1>
-                <p class="text-lg text-slate-600 leading-relaxed">
-                    Access your Google Slides presentation immediately. You can view it online or save a copy to your local storage.
-                </p>
-                
-                <div class="pt-4 flex flex-col sm:flex-row gap-4">
-                    <a href="https://docs.google.com/presentation/d/1QFgqEqODsxqljeX3hl_7najze78S_sf5qhhpbYa7BcQ/edit?usp=sharing" 
-                       target="_blank"
-                       class="gradient-bg text-white px-8 py-4 rounded-xl font-bold text-center hover-lift shadow-lg flex items-center justify-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Download Now</span>
-                    </a>
-                    <button onclick="copyLink()" class="bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-xl font-bold text-center hover:bg-slate-50 transition-colors flex items-center justify-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span id="copyText">Copy Link</span>
-                    </button>
-                </div>
-
-                <div class="flex items-center space-x-4 text-sm text-slate-500 pt-2">
-                    <div class="flex items-center">
-                        <svg class="w-4 h-4 mr-1 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
-                        Virus Free
-                    </div>
-                    <div class="flex items-center">
-                        <svg class="w-4 h-4 mr-1 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
-                        Secure Link
-                    </div>
-                </div>
+        <!-- Question Section -->
+        <div id="question-view">
+            <div class="mb-6">
+                <span id="q-number" class="text-sm font-bold text-yellow-500 uppercase">Pytanie 1 z 5</span>
+                <h2 id="q-text" class="text-2xl text-white mt-2 leading-tight">Ładowanie pytania...</h2>
             </div>
 
-            <!-- Right Side: Visual Mockup -->
-            <div class="relative">
-                <div class="absolute -inset-4 bg-indigo-500/10 rounded-3xl blur-2xl"></div>
-                <div class="relative glass-card rounded-2xl p-4 shadow-2xl border border-white/50">
-                    <div class="bg-slate-900 aspect-video rounded-lg overflow-hidden flex items-center justify-center">
-                        <div class="text-center p-8">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-indigo-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                            </svg>
-                            <p class="text-slate-400 font-medium">Presentation Preview</p>
-                            <p class="text-slate-500 text-xs mt-1 italic">Click download to view full content</p>
-                        </div>
-                    </div>
-                    <div class="mt-4 flex items-center justify-between">
-                        <div>
-                            <p class="font-bold text-slate-800">presentation_file.pptx</p>
-                            <p class="text-xs text-slate-500 uppercase tracking-widest">Google Slides Document</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs font-semibold text-slate-400">STATUS</p>
-                            <p class="text-xs font-bold text-green-500">READY</p>
-                        </div>
-                    </div>
-                </div>
+            <div id="options-container" class="space-y-3">
+                <!-- Options will be injected here -->
             </div>
 
+            <div id="feedback" class="mt-6 p-4 rounded-lg hidden">
+                <p id="feedback-text" class="text-sm"></p>
+            </div>
+
+            <button id="next-btn" class="mt-8 w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded-lg transition hidden">
+                Następne pytanie
+            </button>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="p-8 border-t border-slate-200 bg-white">
-        <div class="max-w-6xl mx-auto text-center md:text-left md:flex justify-between items-center text-slate-500 text-sm">
-            <p>&copy; 2024 Fiwfuhfwuhfeuewhfuefhefwuhfweuefhuewfhefnc. Secure document distribution.</p>
-            <div class="flex justify-center space-x-6 mt-4 md:mt-0">
-                <a href="#" class="hover:text-indigo-600">Privacy Policy</a>
-                <a href="#" class="hover:text-indigo-600">Terms of Service</a>
-                <a href="#" class="hover:text-indigo-600">Contact Support</a>
-            </div>
+        <!-- Results Section -->
+        <div id="result-view" class="hidden text-center py-10">
+            <h2 class="text-4xl text-white mb-4">Koniec Quizu!</h2>
+            <div class="text-6xl font-bold text-yellow-500 mb-6" id="final-score">0/0</div>
+            <p id="result-message" class="text-xl text-gray-300 mb-8"></p>
+            <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition">
+                Spróbuj ponownie
+            </button>
         </div>
-    </footer>
-
-    <!-- Feedback Toast -->
-    <div id="toast" class="fixed bottom-8 right-8 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl transition-all opacity-0 translate-y-10 pointer-events-none flex items-center space-x-2">
-        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        <span>Link copied to clipboard!</span>
     </div>
 
     <script>
-        function copyLink() {
-            const link = "https://docs.google.com/presentation/d/1QFgqEqODsxqljeX3hl_7najze78S_sf5qhhpbYa7BcQ/edit?usp=sharing";
-            
-            // Create a temporary textarea to copy from
-            const textArea = document.createElement("textarea");
-            textArea.value = link;
-            document.body.appendChild(textArea);
-            textArea.select();
-            
-            try {
-                document.execCommand('copy');
-                showToast();
-            } catch (err) {
-                console.error('Fallback: Oops, unable to copy', err);
+        const quizData = [
+            {
+                question: "Który typ mostu jest najstarszy i opiera się na prostych poziomach podpartych na końcach?",
+                options: ["Most wiszący", "Most belkowy", "Most łukowy", "Most wantowy"],
+                correct: 1,
+                feedback: "Mosty belkowe to najbardziej podstawowa konstrukcja, wywodząca się od kłód rzuconych przez strumień."
+            },
+            {
+                question: "W jaki sposób mosty łukowe radzą sobie z obciążeniem?",
+                options: [
+                    "Wykorzystują tylko liny",
+                    "Zmieniają rozciąganie na ściskanie",
+                    "Nie potrzebują fundamentów",
+                    "Zawsze są ruchome"
+                ],
+                correct: 1,
+                feedback: "Krzywizna łuku przekazuje siły bezpośrednio na podpory poprzez proces ściskania materiału."
+            },
+            {
+                question: "Który most pozwala na największe rozpiętości bez podpór pośrednich?",
+                options: ["Most kratownicowy", "Most ruchomy", "Most wiszący", "Most łukowy"],
+                correct: 2,
+                feedback: "Mosty wiszące (jak Golden Gate) mogą pokonywać dystanse kilku kilometrów dzięki systemowi potężnych lin."
+            },
+            {
+                question: "Co jest charakterystycznym elementem mostu wantowego?",
+                options: [
+                    "Drewniane pale",
+                    "Ukośne liny łączące pylon z pomostem",
+                    "Brak jezdni",
+                    "Ruchome przęsła"
+                ],
+                correct: 1,
+                feedback: "W mostach wantowych (podwieszanych) liny biegną ukośnie od wysokich pylonów wprost do krawędzi jezdni."
+            },
+            {
+                question: "Gdzie znajduje się najdłuższy most na świecie (Danyang-Kunshan)?",
+                options: ["USA", "Turcja", "Chiny", "Francja"],
+                correct: 2,
+                feedback: "Ten gigantyczny wiadukt kolejowy o długości ponad 164 km znajduje się w Chinach."
             }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        const qText = document.getElementById('q-text');
+        const qNumber = document.getElementById('q-number');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const feedback = document.getElementById('feedback');
+        const feedbackText = document.getElementById('feedback-text');
+        const progress = document.getElementById('progress');
+
+        function loadQuestion() {
+            answered = false;
+            const data = quizData[currentQuestion];
+            qNumber.innerText = `Pytanie ${currentQuestion + 1} z ${quizData.length}`;
+            qText.innerText = data.question;
+            progress.style.width = `${(currentQuestion / quizData.length) * 100}%`;
             
-            document.body.removeChild(textArea);
+            optionsContainer.innerHTML = '';
+            data.options.forEach((opt, index) => {
+                const div = document.createElement('div');
+                div.className = 'option-card bg-gray-700 p-4 rounded-lg text-gray-200';
+                div.innerText = opt;
+                div.onclick = () => selectOption(index, div);
+                optionsContainer.appendChild(div);
+            });
+
+            feedback.classList.add('hidden');
+            nextBtn.classList.add('hidden');
         }
 
-        function showToast() {
-            const toast = document.getElementById('toast');
-            toast.classList.remove('opacity-0', 'translate-y-10');
-            toast.classList.add('opacity-100', 'translate-y-0');
+        function selectOption(index, element) {
+            if (answered) return;
+            answered = true;
             
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-10');
-                toast.classList.remove('opacity-100', 'translate-y-0');
-            }, 3000);
+            const correctIndex = quizData[currentQuestion].correct;
+            const allOptions = optionsContainer.children;
+
+            if (index === correctIndex) {
+                element.classList.add('correct');
+                score++;
+                feedback.className = 'mt-6 p-4 rounded-lg bg-green-900/30 border border-green-500 text-green-400';
+                feedbackText.innerHTML = "<strong>Brawo!</strong> " + quizData[currentQuestion].feedback;
+            } else {
+                element.classList.add('wrong');
+                allOptions[correctIndex].classList.add('correct');
+                feedback.className = 'mt-6 p-4 rounded-lg bg-red-900/30 border border-red-500 text-red-400';
+                feedbackText.innerHTML = "<strong>Błąd.</strong> " + quizData[currentQuestion].feedback;
+            }
+
+            feedback.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+            
+            if (currentQuestion === quizData.length - 1) {
+                nextBtn.innerText = "Zobacz wyniki";
+            }
         }
+
+        nextBtn.onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        };
+
+        function showResults() {
+            document.getElementById('question-view').classList.add('hidden');
+            document.getElementById('result-view').classList.remove('hidden');
+            progress.style.width = '100%';
+            
+            const scoreDisplay = document.getElementById('final-score');
+            scoreDisplay.innerText = `${score} / ${quizData.length}`;
+            
+            const msg = document.getElementById('result-message');
+            const percent = (score / quizData.length) * 100;
+            if (percent === 100) msg.innerText = "Jesteś mistrzem inżynierii!";
+            else if (percent >= 70) msg.innerText = "Świetny wynik!";
+            else if (percent >= 50) msg.innerText = "Nieźle, ale mogło być lepiej.";
+            else msg.innerText = "Warto jeszcze raz przejrzeć prezentację.";
+        }
+
+        loadQuestion();
     </script>
 </body>
 </html>
