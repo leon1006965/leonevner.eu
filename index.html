@@ -56,6 +56,7 @@
             background: #222;
             cursor: pointer;
             border: 1px solid #444;
+            font-weight: bold;
         }
 
         #chat-container {
@@ -141,9 +142,23 @@
             padding-left: 20px;
             margin-bottom: 5px;
         }
+
+        /* Help overlay if offline */
+        #offline-notice {
+            display: none;
+            background: #440000;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
+
+    <div id="offline-notice">
+        ⚠️ NODE OFFLINE: <a href="https://erlene-ramose-randi.ngrok-free.dev" target="_blank" style="color: white; text-decoration: underline;">Click here to authorize connection</a> then refresh this page.
+    </div>
 
     <header>
         <h1>WormGPT</h1>
@@ -171,24 +186,28 @@
         const sendBtn = document.getElementById('sendBtn');
         const typingIndicator = document.getElementById('typing-indicator');
         const connStatus = document.getElementById('conn-status');
+        const offlineNotice = document.getElementById('offline-notice');
 
         userInput.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
 
         async function checkConnection() {
             connStatus.textContent = "Checking...";
             try {
-                const response = await fetch(NGROK_URL, {
+                // We use a simple tag fetch to bypass most CORS issues for status check
+                const response = await fetch(`${NGROK_URL}/api/tags`, {
                     headers: { 'ngrok-skip-browser-warning': 'true' }
                 });
                 if (response.ok) {
                     connStatus.textContent = "Node Online";
                     connStatus.style.color = "#4bff4b";
+                    offlineNotice.style.display = "none";
                 } else {
                     throw new Error();
                 }
             } catch (e) {
                 connStatus.textContent = "Node Offline";
                 connStatus.style.color = "var(--primary-red)";
+                offlineNotice.style.display = "block";
             }
         }
 
@@ -223,7 +242,8 @@
 
             } catch (error) {
                 console.error("Error:", error);
-                addMessage("CONNECTION ERROR: Ensure you have visited the ngrok link in a separate tab and clicked 'Visit Site'.", 'bot-message');
+                addMessage("CONNECTION ERROR: The link to your PC is blocked. \n\nFIX: Click the 'authorize connection' link at the very top of this page, then click 'Visit Site' on the page that opens.", 'bot-message');
+                checkConnection();
             } finally {
                 setLoading(false);
             }
@@ -243,6 +263,7 @@
             typingIndicator.style.display = isLoading ? 'block' : 'none';
         }
 
+        // Initial check
         checkConnection();
     </script>
 </body>
