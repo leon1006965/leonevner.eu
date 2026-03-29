@@ -43,6 +43,7 @@
             border-radius: 4px;
             background: #222;
             border: 1px solid #444;
+            font-weight: bold;
         }
 
         #chat-container {
@@ -93,30 +94,51 @@
             cursor: pointer;
         }
 
-        #force-btn { 
-            background: #444; 
-            color: white; 
-            font-size: 0.7rem; 
-            padding: 5px 10px; 
-            height: fit-content;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        /* Large error overlay for when it breaks */
+        #error-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .fix-btn {
+            background: var(--primary-red);
+            color: black;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 20px;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
 
+    <div id="error-overlay">
+        <h2 style="color: var(--primary-red)">⚠️ CONNECTION BLOCKED BY BROWSER</h2>
+        <p style="margin: 20px 0; color: #ccc; max-width: 500px;">Your browser is protecting you from the ngrok tunnel. You need to manually authorize it one time.</p>
+        <a href="https://erlene-ramose-randi.ngrok-free.dev" target="_blank" class="fix-btn" onclick="location.reload()">CLICK HERE & PRESS "VISIT SITE"</a>
+        <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">After clicking "Visit Site" in the new tab, refresh this page.</p>
+    </div>
+
     <header>
         <h1>WORMGPT</h1>
         <div class="controls">
-            <button id="force-btn" onclick="window.open('https://erlene-ramose-randi.ngrok-free.dev', '_blank')">FORCE CONNECT</button>
-            <div id="conn-status">Checking Node...</div>
+            <div id="conn-status">STATUS: CHECKING...</div>
         </div>
     </header>
 
     <div id="chat-container">
-        <div class="message bot-message">Hello. How can I help you today?</div>
+        <div class="message bot-message">System initialized. Awaiting connection to local node...</div>
     </div>
 
     <div class="input-area">
@@ -130,17 +152,22 @@
 
         async function checkConnection() {
             const statusDiv = document.getElementById('conn-status');
+            const overlay = document.getElementById('error-overlay');
             try {
+                // Testing the tags endpoint which is lightest
                 const res = await fetch(`${NGROK_URL}/api/tags`, {
                     headers: { 'ngrok-skip-browser-warning': 'true' }
                 });
                 if (res.ok) {
-                    statusDiv.innerText = "Node Online";
+                    statusDiv.innerText = "NODE ONLINE";
                     statusDiv.style.color = "#4bff4b";
+                    overlay.style.display = 'none';
                 } else { throw new Error(); }
             } catch (e) {
-                statusDiv.innerText = "Node Offline";
+                statusDiv.innerText = "NODE OFFLINE";
                 statusDiv.style.color = "#ff4b4b";
+                // Only show overlay if we are definitely failing
+                overlay.style.display = 'flex';
             }
         }
 
@@ -156,10 +183,11 @@
             btn.disabled = true;
 
             try {
+                // Use a standard POST request
                 const response = await fetch(`${NGROK_URL}/api/generate`, {
                     method: 'POST',
                     headers: { 
-                        'Content-Type': 'text/plain', 
+                        'Content-Type': 'text/plain', // Helps with some CORS issues
                         'ngrok-skip-browser-warning': 'true'
                     },
                     body: JSON.stringify({
@@ -169,10 +197,13 @@
                     })
                 });
 
+                if (!response.ok) throw new Error();
+
                 const data = await response.json();
                 addMsg(data.response, 'bot-message');
             } catch (err) {
-                addMsg("ERROR: Connection failed. Click 'FORCE CONNECT' and ensure Ollama is running.", 'bot-message');
+                addMsg("CRITICAL ERROR: Connection to Ollama failed. Please ensure the ngrok tunnel is still active and authorized.", 'bot-message');
+                document.getElementById('error-overlay').style.display = 'flex';
             } finally {
                 input.disabled = false;
                 btn.disabled = false;
@@ -191,8 +222,11 @@
         }
 
         document.getElementById('userInput').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
-        setInterval(checkConnection, 5000);
+        
+        // Check once on load
         checkConnection();
+        // Check every 10 seconds just in case
+        setInterval(checkConnection, 10000);
     </script>
 </body>
 </html>
