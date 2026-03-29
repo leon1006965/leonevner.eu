@@ -3,60 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WormGPT Interface</title>
+    <title>WormGPT</title>
     <style>
         :root {
             --primary-red: #ff4b4b;
             --dark-bg: #0a0a0a;
             --card-bg: #161616;
-            --text-gray: #b0b0b0;
             --user-msg: #202020;
             --bot-msg: #2a0a0a;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: var(--dark-bg);
             color: white;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            margin: 0;
             overflow: hidden;
         }
 
         header {
-            padding: 20px;
-            background: linear-gradient(to right, #1a0000, #000);
+            padding: 15px 20px;
+            background: #000;
             border-bottom: 2px solid var(--primary-red);
-            text-align: center;
-            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        header h1 {
-            color: var(--primary-red);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            font-size: 1.5rem;
-        }
+        h1 { color: var(--primary-red); margin: 0; font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        .controls { display: flex; gap: 10px; align-items: center; }
 
         #conn-status {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
             font-size: 0.7rem;
             padding: 5px 10px;
             border-radius: 4px;
             background: #222;
-            cursor: pointer;
             border: 1px solid #444;
-            font-weight: bold;
         }
 
         #chat-container {
@@ -69,163 +55,111 @@
         }
 
         .message {
-            max-width: 80%;
+            max-width: 85%;
             padding: 12px 16px;
             border-radius: 8px;
             line-height: 1.5;
             font-size: 0.95rem;
         }
 
-        .user-message {
-            align-self: flex-end;
-            background-color: var(--user-msg);
-            border-left: 3px solid #555;
-        }
-
-        .bot-message {
-            align-self: flex-start;
-            background-color: var(--bot-msg);
-            border-left: 3px solid var(--primary-red);
-            white-space: pre-wrap;
-        }
-
-        .status-msg {
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--text-gray);
-            margin: 10px 0;
-        }
+        .user-message { align-self: flex-end; background: var(--user-msg); border-right: 3px solid #555; }
+        .bot-message { align-self: flex-start; background: var(--bot-msg); border-left: 3px solid var(--primary-red); white-space: pre-wrap; }
 
         .input-area {
             padding: 20px;
-            background-color: var(--card-bg);
+            background: var(--card-bg);
             border-top: 1px solid #333;
             display: flex;
             gap: 10px;
         }
 
-        input[type="text"] {
+        input {
             flex: 1;
-            background-color: #000;
+            background: #000;
             border: 1px solid #444;
             color: white;
-            padding: 12px 15px;
+            padding: 12px;
             border-radius: 4px;
             outline: none;
         }
 
-        input[type="text"]:focus {
-            border-color: var(--primary-red);
-        }
-
         button {
-            background-color: var(--primary-red);
+            background: var(--primary-red);
             color: black;
             border: none;
-            padding: 0 25px;
+            padding: 0 20px;
             border-radius: 4px;
             font-weight: bold;
-            text-transform: uppercase;
             cursor: pointer;
         }
 
-        button:disabled {
-            background-color: #555;
-            cursor: not-allowed;
-        }
-
-        .typing {
-            font-style: italic;
-            color: var(--primary-red);
-            font-size: 0.8rem;
-            display: none;
-            padding-left: 20px;
-            margin-bottom: 5px;
-        }
-
-        /* Help overlay if offline */
-        #offline-notice {
-            display: none;
-            background: #440000;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-size: 0.8rem;
+        #force-btn { 
+            background: #444; 
+            color: white; 
+            font-size: 0.7rem; 
+            padding: 5px 10px; 
+            height: fit-content;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div id="offline-notice">
-        ⚠️ NODE OFFLINE: <a href="https://erlene-ramose-randi.ngrok-free.dev" target="_blank" style="color: white; text-decoration: underline;">Click here to authorize connection</a> then refresh this page.
-    </div>
-
     <header>
-        <h1>WormGPT</h1>
-        <div id="conn-status" onclick="checkConnection()">Check Node</div>
+        <h1>WORMGPT</h1>
+        <div class="controls">
+            <button id="force-btn" onclick="window.open('https://erlene-ramose-randi.ngrok-free.dev', '_blank')">FORCE CONNECT</button>
+            <div id="conn-status">Checking Node...</div>
+        </div>
     </header>
 
     <div id="chat-container">
-        <div class="status-msg">Connection active.</div>
         <div class="message bot-message">Hello. How can I help you today?</div>
     </div>
 
-    <div class="typing" id="typing-indicator">WormGPT is processing...</div>
-
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Enter message..." autocomplete="off">
-        <button id="sendBtn" onclick="sendMessage()">Send</button>
+        <input type="text" id="userInput" placeholder="Message WormGPT..." autocomplete="off">
+        <button id="sendBtn" onclick="sendMessage()">SEND</button>
     </div>
 
     <script>
         const NGROK_URL = "https://erlene-ramose-randi.ngrok-free.dev";
         const MODEL_NAME = "huihui_ai/gemma3-abliterated:1b";
 
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const typingIndicator = document.getElementById('typing-indicator');
-        const connStatus = document.getElementById('conn-status');
-        const offlineNotice = document.getElementById('offline-notice');
-
-        userInput.addEventListener("keypress", (e) => { if (e.key === "Enter") sendMessage(); });
-
         async function checkConnection() {
-            connStatus.textContent = "Checking...";
+            const statusDiv = document.getElementById('conn-status');
             try {
-                // We use a simple tag fetch to bypass most CORS issues for status check
-                const response = await fetch(`${NGROK_URL}/api/tags`, {
+                const res = await fetch(`${NGROK_URL}/api/tags`, {
                     headers: { 'ngrok-skip-browser-warning': 'true' }
                 });
-                if (response.ok) {
-                    connStatus.textContent = "Node Online";
-                    connStatus.style.color = "#4bff4b";
-                    offlineNotice.style.display = "none";
-                } else {
-                    throw new Error();
-                }
+                if (res.ok) {
+                    statusDiv.innerText = "Node Online";
+                    statusDiv.style.color = "#4bff4b";
+                } else { throw new Error(); }
             } catch (e) {
-                connStatus.textContent = "Node Offline";
-                connStatus.style.color = "var(--primary-red)";
-                offlineNotice.style.display = "block";
+                statusDiv.innerText = "Node Offline";
+                statusDiv.style.color = "#ff4b4b";
             }
         }
 
         async function sendMessage() {
-            const text = userInput.value.trim();
+            const input = document.getElementById('userInput');
+            const btn = document.getElementById('sendBtn');
+            const text = input.value.trim();
             if (!text) return;
 
-            addMessage(text, 'user-message');
-            userInput.value = '';
-            setLoading(true);
+            addMsg(text, 'user-message');
+            input.value = '';
+            input.disabled = true;
+            btn.disabled = true;
 
             try {
-                const endpoint = `${NGROK_URL}/api/generate`;
-
-                const response = await fetch(endpoint, {
+                const response = await fetch(`${NGROK_URL}/api/generate`, {
                     method: 'POST',
                     headers: { 
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'text/plain', 
                         'ngrok-skip-browser-warning': 'true'
                     },
                     body: JSON.stringify({
@@ -235,35 +169,29 @@
                     })
                 });
 
-                if (!response.ok) throw new Error(`Status: ${response.status}`);
-
                 const data = await response.json();
-                addMessage(data.response, 'bot-message');
-
-            } catch (error) {
-                console.error("Error:", error);
-                addMessage("CONNECTION ERROR: The link to your PC is blocked. \n\nFIX: Click the 'authorize connection' link at the very top of this page, then click 'Visit Site' on the page that opens.", 'bot-message');
-                checkConnection();
+                addMsg(data.response, 'bot-message');
+            } catch (err) {
+                addMsg("ERROR: Connection failed. Click 'FORCE CONNECT' and ensure Ollama is running.", 'bot-message');
             } finally {
-                setLoading(false);
+                input.disabled = false;
+                btn.disabled = false;
+                input.focus();
+                checkConnection();
             }
         }
 
-        function addMessage(content, className) {
+        function addMsg(content, cls) {
             const div = document.createElement('div');
-            div.className = `message ${className}`;
+            div.className = `message ${cls}`;
             div.textContent = content;
-            chatContainer.appendChild(div);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            const container = document.getElementById('chat-container');
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
         }
 
-        function setLoading(isLoading) {
-            userInput.disabled = isLoading;
-            sendBtn.disabled = isLoading;
-            typingIndicator.style.display = isLoading ? 'block' : 'none';
-        }
-
-        // Initial check
+        document.getElementById('userInput').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+        setInterval(checkConnection, 5000);
         checkConnection();
     </script>
 </body>
