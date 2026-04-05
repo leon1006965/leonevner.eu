@@ -1,163 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Miracle of Honey: How Bees Do It!</title>
+    <title>Opium OS - v0.0.5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Classic 90s Web Styles */
-        body {
-            background-color: #f0f0f0;
-            background-image: url('https://www.transparenttextures.com/patterns/hexellence.png'); /* Hexagon pattern */
-            color: #333300;
-            font-family: "Times New Roman", Times, serif;
-            margin: 20px;
-            line-height: 1.4;
-        }
-
-        h1 {
-            color: #996600;
-            text-align: center;
-            border-bottom: 3px double #996600;
-            padding-bottom: 10px;
-            font-size: 32px;
-        }
-
-        h2 {
-            color: #664400;
-            border-left: 10px solid #ffcc00;
-            padding-left: 10px;
-        }
-
-        .container {
-            background-color: #ffffff;
-            border: 2px solid #996600;
-            padding: 25px;
-            max-width: 800px;
-            margin: 0 auto;
-            box-shadow: 10px 10px 0px #cccccc;
-        }
-
-        .navbar {
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .navbar a {
-            color: #0000ff;
-            text-decoration: underline;
-            margin: 0 10px;
-        }
-
-        .navbar a:hover {
-            color: #ff0000;
-        }
-
-        .fact-box {
-            background-color: #ffffcc;
-            border: 1px dashed #996600;
-            padding: 15px;
-            margin: 20px 0;
-        }
-
-        .honey-image {
-            float: right;
-            margin: 0 0 15px 15px;
-            border: 4px solid #ffcc00;
-            background: #fff;
-            padding: 5px;
-        }
-
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 12px;
-            color: #666;
-            border-top: 1px solid #ccc;
-            padding-top: 10px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .honey-image {
-                float: none;
-                display: block;
-                margin: 0 auto 15px;
-                width: 100%;
-                max-width: 200px;
-            }
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+        body, html { margin: 0; padding: 0; height: 100%; background-color: #0a0a0a; color: #d1d1d1; font-family: 'Fira+Code', monospace; overflow: hidden; }
+        #terminal-container { height: 100%; width: 100%; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
+        .log-entry { margin-bottom: 4px; line-height: 1.4; }
+        .log-info { color: #4ade80; }
+        .log-error { color: #f87171; }
+        #input-line { display: flex; align-items: center; margin-top: 10px; }
+        #prompt { color: #4ade80; margin-right: 10px; white-space: nowrap; }
+        #cmd-input { background: transparent; border: none; outline: none; color: #fff; flex-grow: 1; font-family: inherit; font-size: 1rem; }
+        
+        /* FIXED: Added solid background and high z-index to prevent ghosting */
+        #gui-layer { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background-color: #020617; 
+            display: none; 
+            z-index: 99999; 
         }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="navbar">
-        <a href="#">[Home]</a>
-        <a href="#">[Bee Facts]</a>
-        <a href="#">[Types of Honey]</a>
-        <a href="#">[Save the Bees]</a>
+    <div id="terminal-container">
+        <div id="output">
+            <div class="log-entry">Opium OS [Version 0.0.5]</div>
+            <div class="log-entry">Kernel initialized. UI ghosting patch applied.</div>
+            <br>
+        </div>
+        <div id="input-line">
+            <span id="prompt">opium@kernel:~$</span>
+            <input type="text" id="cmd-input" autofocus spellcheck="false">
+        </div>
     </div>
+    <div id="gui-layer"></div>
 
-    <h1>Nature's Golden Nectar</h1>
-    <p align="center"><i>A Comprehensive Guide to the Honey-Making Process</i></p>
+    <script>
+        const output = document.getElementById('output');
+        const input = document.getElementById('cmd-input');
+        const guiLayer = document.getElementById('gui-layer');
+        
+        const OS_STATE = { 
+            version: "0.0.5", 
+            installedGui: null, 
+            isGuiRunning: false,
+            programs: {} 
+        };
 
-    <div class="honey-image">
-        <!-- SVG Bee Icon as a fallback for external images -->
-        <svg width="150" height="150" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="40" fill="#FFCC00" />
-            <ellipse cx="50" cy="45" rx="30" ry="20" fill="#333" />
-            <path d="M30 40 Q 50 10 70 40" stroke="lightblue" stroke-width="5" fill="none" />
-            <circle cx="40" cy="40" r="3" fill="white" />
-            <circle cx="60" cy="40" r="3" fill="white" />
-        </svg>
-        <br>
-        <small><center>Busy Worker Bee</center></small>
-    </div>
+        const print = (text, type = '') => {
+            const div = document.createElement('div');
+            div.className = `log-entry ${type ? 'log-' + type : ''}`;
+            div.innerText = text;
+            output.appendChild(div);
+            document.getElementById('terminal-container').scrollTop = output.scrollHeight;
+            if(OS_STATE.isGuiRunning) window.dispatchEvent(new CustomEvent('opium_print', { detail: { text, type } }));
+        };
 
-    <h2>Step 1: The Foraging Flight</h2>
-    <p>
-        The journey of honey begins in the fields and gardens. Worker bees, which are all female, fly out from the hive in search of flowers rich in nectar. Using their long, straw-like tongues called a <b>proboscis</b>, they suck up droplets of nectar from the flower's heart. 
-    </p>
-    <p>
-        Interestingly, bees have two stomachs. One is for their own digestion, and the other—the "honey stomach"—is specifically for storing and transporting nectar back to the colony.
-    </p>
+        const commands = {
+            'help': () => print("Commands: help, clear, import gui [url], import program [name] [url], gui, neofetch"),
+            'clear': () => { output.innerHTML = ''; },
+            'neofetch': () => print("Opium OS v0.0.5\nStatus: Optimized\nUI Layer: Active"),
+            'import': async (args) => {
+                const type = args[0];
+                if (type === 'gui') {
+                    try {
+                        print(`Fetching GUI...`, "info");
+                        const res = await fetch(args[1]);
+                        OS_STATE.installedGui = await res.text();
+                        print(`GUI System Updated.`, "info");
+                    } catch (e) { print("Import failed: " + e.message, "error"); }
+                } else if (type === 'program') {
+                    const [name, url] = [args[1], args[2]];
+                    try {
+                        print(`Installing ${name}...`, "info");
+                        const res = await fetch(url);
+                        OS_STATE.programs[name] = await res.text();
+                        print(`'${name}' installed.`, "info");
+                        if(OS_STATE.isGuiRunning) window.dispatchEvent(new CustomEvent('opium_new_program', { detail: { name } }));
+                    } catch (e) { print("Install failed: " + e.message, "error"); }
+                }
+            },
+            'gui': () => {
+                if (!OS_STATE.installedGui) return print("No GUI installed.", "error");
+                guiLayer.innerHTML = OS_STATE.installedGui;
+                guiLayer.style.display = 'block';
+                OS_STATE.isGuiRunning = true;
+                
+                const scripts = Array.from(guiLayer.querySelectorAll("script"));
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(a => newScript.setAttribute(a.name, a.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
 
-    <div class="fact-box">
-        <strong>Did You Know?</strong><br>
-        To make just one pound of honey, a colony of bees must visit approximately <u>2 million flowers</u> and fly over 55,000 miles!
-    </div>
+                Object.keys(OS_STATE.programs).forEach(name => {
+                    window.dispatchEvent(new CustomEvent('opium_new_program', { detail: { name } }));
+                });
+            }
+        };
 
-    <h2>Step 2: The Hand-off</h2>
-    <p>
-        When the forager returns to the hive, she passes the nectar to "house bees." This is done through a process of regurgitation where the nectar is passed from bee to bee. During this hand-off, enzymes in the bees' stomachs begin to break down the complex sugars of the nectar into simpler sugars.
-    </p>
+        window.OS = {
+            exitGui: () => {
+                guiLayer.style.display = 'none';
+                guiLayer.innerHTML = '';
+                OS_STATE.isGuiRunning = false;
+                print("GUI Session terminated.", "info");
+            },
+            runCommand: (cmd) => {
+                const parts = cmd.split(' ');
+                const base = parts[0].toLowerCase();
+                const args = parts.slice(1);
+                if (commands[base]) commands[base](args);
+                else if (OS_STATE.programs[base]) window.dispatchEvent(new CustomEvent('opium_run_program', { detail: { name: base, html: OS_STATE.programs[base] } }));
+                else print(`Unknown command: ${base}`, "error");
+            }
+        };
 
-    <h2>Step 3: Dehydration</h2>
-    <p>
-        The bees spread the nectar into the hexagonal wax cells of the honeycomb. At this stage, the nectar is still very watery. To thicken it into honey, the bees gather around the cells and flap their wings rapidly. This creates a constant breeze that evaporates the excess water.
-    </p>
-
-    <h2>Step 4: Sealing the Treasure</h2>
-    <p>
-        Once the water content drops below 18%, the nectar has officially become honey. To keep it fresh and prevent it from absorbing moisture from the air, the bees seal the cell with a fresh layer of <b>beeswax</b>. This "capping" ensures the honey can be stored indefinitely as a food source for the winter.
-    </p>
-
-    <p align="center">
-        <hr width="50%">
-        <img src="https://via.placeholder.com/100x30/FFCC00/000000?text=SWEET+FACTS" alt="Divider Image">
-    </p>
-
-    <div class="footer">
-        <p>This page is best viewed in <b>Netscape Navigator 4.0</b> or higher.</p>
-        <p>&copy; 1997 The Bee Enthusiast Network | <a href="mailto:webmaster@beemail.com">Email Us</a></p>
-        <p>
-            <img src="https://via.placeholder.com/88x31/0000FF/FFFFFF?text=HTML+2.0" alt="Valid HTML">
-            <img src="https://via.placeholder.com/88x31/333333/FFFFFF?text=MADE+ON+MAC" alt="Made on Mac">
-        </p>
-    </div>
-</div>
-
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                const val = input.value;
+                input.value = '';
+                window.OS.runCommand(val);
+            }
+        });
+    </script>
 </body>
 </html>
