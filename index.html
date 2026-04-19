@@ -71,22 +71,40 @@
 
     <div class="container">
         <h1>App Downloads</h1>
-        <div id="status">Loading files...</div>
+        <div id="status">Scanning directory...</div>
         <ul id="apk-list" class="file-list"></ul>
     </div>
 
     <script type="text/javascript">
-        // --- CONFIGURATION ---
-        // Change these to match your GitHub details
-        var username = "YOUR_GITHUB_USERNAME";
-        var repo = "YOUR_REPO_NAME";
-        // ---------------------
-
-        var apiUrL = "https://api.github.com/repos/" + username + "/" + repo + "/contents/";
+        // This script automatically detects your username and repo from the URL
+        // Example URL: https://username.github.io/repo-name/
+        
         var listElement = document.getElementById("apk-list");
         var statusElement = document.getElementById("status");
 
+        function getRepoInfo() {
+            var host = window.location.hostname; // e.g., username.github.io
+            var path = window.location.pathname; // e.g., /repo-name/
+            
+            var user = host.split('.')[0];
+            var repo = path.split('/')[1];
+            
+            // Clean up repo name (remove trailing slashes or index.html)
+            if (!repo || repo === "index.html") {
+                // This might happen if the repo name is the same as the username (user.github.io)
+                repo = host; 
+            }
+
+            return {
+                user: user,
+                repo: repo
+            };
+        }
+
         function loadFiles() {
+            var info = getRepoInfo();
+            var apiUrL = "https://api.github.com/repos/" + info.user + "/" + info.repo + "/contents/";
+            
             var xhr = new XMLHttpRequest();
             xhr.open("GET", apiUrL, true);
             
@@ -94,9 +112,9 @@
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         var files = JSON.parse(xhr.responseText);
-                        renderList(files);
+                        renderList(files, info);
                     } else {
-                        statusElement.innerHTML = "Error loading files. Check username/repo settings.";
+                        statusElement.innerHTML = "Error: Could not list files automatically.<br>Make sure this is hosted on GitHub Pages.";
                         statusElement.className = "error";
                     }
                 }
@@ -104,22 +122,21 @@
             xhr.send();
         }
 
-        function renderList(files) {
+        function renderList(files, info) {
             var foundApk = false;
             statusElement.style.display = "none";
             
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
                 
-                // Only show files ending in .apk
                 if (file.name.toLowerCase().indexOf(".apk") !== -1) {
                     foundApk = true;
                     
                     var li = document.createElement("li");
                     li.className = "file-item";
                     
-                    // Link to the raw file on GitHub for direct download
-                    var downloadUrl = "https://raw.githubusercontent.com/" + username + "/" + repo + "/main/" + file.name;
+                    // Construct the download link using detected info
+                    var downloadUrl = "https://raw.githubusercontent.com/" + info.user + "/" + info.repo + "/main/" + file.name;
                     
                     li.innerHTML = 
                         '<div class="file-link">' + file.name + '</div>' +
@@ -131,11 +148,10 @@
 
             if (!foundApk) {
                 statusElement.style.display = "block";
-                statusElement.innerHTML = "No APK files found in the root directory.";
+                statusElement.innerHTML = "No APK files found in this repository.";
             }
         }
 
-        // Run the script
         window.onload = loadFiles;
     </script>
 </body>
