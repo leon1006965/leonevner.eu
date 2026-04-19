@@ -61,10 +61,34 @@
             font-style: italic;
             color: #666;
         }
-        .error {
-            color: red;
-            text-align: center;
+        .error-container {
+            display: none;
+            background: #fff0f0;
+            border: 1px solid #ffa3a3;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .error-text {
+            color: #d32f2f;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .manual-input {
+            width: 100%;
             padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .retry-btn {
+            background: #0078d7;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 4px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -72,21 +96,37 @@
 
     <div class="container">
         <h1>App Downloads</h1>
-        <div id="status">Loading files from leonevner.eu...</div>
+        
+        <div id="status">Loading files...</div>
+
+        <div id="error-box" class="error-container">
+            <div class="error-text" id="error-msg">API Error</div>
+            <p style="font-size:12px;">The GitHub API might be rate-limiting you or the repo is private. Enter branch name if 'main' fails:</p>
+            <input type="text" id="branch-input" class="manual-input" value="main">
+            <button class="retry-btn" onclick="loadFiles()">Retry Loading</button>
+        </div>
+
         <ul id="apk-list" class="file-list"></ul>
     </div>
 
     <script type="text/javascript">
-        // --- FIXED CONFIGURATION FOR YOUR REPO ---
+        // --- HARDCODED CONFIG ---
         var GITHUB_USER = "leon1006965";
         var GITHUB_REPO = "leonevner.eu";
-        var BRANCH = "main"; // Change to "master" if your repo uses the old default
-        // -----------------------------------------
+        // ------------------------
 
         var listElement = document.getElementById("apk-list");
         var statusElement = document.getElementById("status");
+        var errorBox = document.getElementById("error-box");
+        var errorMsg = document.getElementById("error-msg");
 
         function loadFiles() {
+            var branch = document.getElementById("branch-input").value || "main";
+            errorBox.style.display = "none";
+            statusElement.style.display = "block";
+            statusElement.innerHTML = "Fetching files for " + GITHUB_USER + "...";
+            listElement.innerHTML = "";
+
             var apiUrL = "https://api.github.com/repos/" + GITHUB_USER + "/" + GITHUB_REPO + "/contents/";
             
             var xhr = new XMLHttpRequest();
@@ -96,32 +136,33 @@
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         var files = JSON.parse(xhr.responseText);
-                        renderList(files);
+                        renderList(files, branch);
                     } else {
-                        statusElement.innerHTML = "Error " + xhr.status + ": Could not fetch file list.<br>Ensure the repository is Public.";
-                        statusElement.className = "error";
+                        statusElement.style.display = "none";
+                        errorBox.style.display = "block";
+                        errorMsg.innerHTML = "GitHub Error (" + xhr.status + ")";
                     }
                 }
             };
             xhr.send();
         }
 
-        function renderList(files) {
+        function renderList(files, branch) {
             var foundApk = false;
             statusElement.style.display = "none";
-            listElement.innerHTML = ""; 
             
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
-                // Check for .apk extension (case insensitive)
-                if (file.name.toLowerCase().substring(file.name.length - 4) === ".apk") {
+                var fileNameLower = file.name.toLowerCase();
+                
+                // Simple extension check compatible with old JS
+                if (fileNameLower.substring(fileNameLower.length - 4) === ".apk") {
                     foundApk = true;
                     
                     var li = document.createElement("li");
                     li.className = "file-item";
                     
-                    // Direct download link from GitHub Raw
-                    var downloadUrl = "https://raw.githubusercontent.com/" + GITHUB_USER + "/" + GITHUB_REPO + "/" + BRANCH + "/" + file.name;
+                    var downloadUrl = "https://raw.githubusercontent.com/" + GITHUB_USER + "/" + GITHUB_REPO + "/" + branch + "/" + file.name;
                     
                     li.innerHTML = 
                         '<span class="file-name">' + file.name + '</span>' +
@@ -133,11 +174,11 @@
 
             if (!foundApk) {
                 statusElement.style.display = "block";
-                statusElement.innerHTML = "No APK files found in the root of the repository.";
+                statusElement.innerHTML = "No APK files found in the root directory.";
             }
         }
 
-        // Start the process
+        // Initialize
         window.onload = loadFiles;
     </script>
 </body>
