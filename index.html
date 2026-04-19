@@ -1,137 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <!-- Essential for the small S2 screen -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opium OS - v0.0.5</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>APK Downloads</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
-        body, html { margin: 0; padding: 0; height: 100%; background-color: #0a0a0a; color: #d1d1d1; font-family: 'Fira+Code', monospace; overflow: hidden; }
-        #terminal-container { height: 100%; width: 100%; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
-        .log-entry { margin-bottom: 4px; line-height: 1.4; }
-        .log-info { color: #4ade80; }
-        .log-error { color: #f87171; }
-        #input-line { display: flex; align-items: center; margin-top: 10px; }
-        #prompt { color: #4ade80; margin-right: 10px; white-space: nowrap; }
-        #cmd-input { background: transparent; border: none; outline: none; color: #fff; flex-grow: 1; font-family: inherit; font-size: 1rem; }
-        
-        /* FIXED: Added solid background and high z-index to prevent ghosting */
-        #gui-layer { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            background-color: #020617; 
-            display: none; 
-            z-index: 99999; 
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 15px;
+            color: #333;
+        }
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            color: #0078d7;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .file-item {
+            border-bottom: 1px solid #eee;
+            padding: 12px 5px;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .file-link {
+            text-decoration: none;
+            color: #333;
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .download-btn {
+            display: inline-block;
+            margin-top: 8px;
+            background-color: #28a745;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        #status {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        .error {
+            color: red;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div id="terminal-container">
-        <div id="output">
-            <div class="log-entry">Opium OS [Version 0.0.5]</div>
-            <div class="log-entry">Kernel initialized. UI ghosting patch applied.</div>
-            <br>
-        </div>
-        <div id="input-line">
-            <span id="prompt">opium@kernel:~$</span>
-            <input type="text" id="cmd-input" autofocus spellcheck="false">
-        </div>
+
+    <div class="container">
+        <h1>App Downloads</h1>
+        <div id="status">Loading files...</div>
+        <ul id="apk-list" class="file-list"></ul>
     </div>
-    <div id="gui-layer"></div>
 
-    <script>
-        const output = document.getElementById('output');
-        const input = document.getElementById('cmd-input');
-        const guiLayer = document.getElementById('gui-layer');
-        
-        const OS_STATE = { 
-            version: "0.0.5", 
-            installedGui: null, 
-            isGuiRunning: false,
-            programs: {} 
-        };
+    <script type="text/javascript">
+        // --- CONFIGURATION ---
+        // Change these to match your GitHub details
+        var username = "YOUR_GITHUB_USERNAME";
+        var repo = "YOUR_REPO_NAME";
+        // ---------------------
 
-        const print = (text, type = '') => {
-            const div = document.createElement('div');
-            div.className = `log-entry ${type ? 'log-' + type : ''}`;
-            div.innerText = text;
-            output.appendChild(div);
-            document.getElementById('terminal-container').scrollTop = output.scrollHeight;
-            if(OS_STATE.isGuiRunning) window.dispatchEvent(new CustomEvent('opium_print', { detail: { text, type } }));
-        };
+        var apiUrL = "https://api.github.com/repos/" + username + "/" + repo + "/contents/";
+        var listElement = document.getElementById("apk-list");
+        var statusElement = document.getElementById("status");
 
-        const commands = {
-            'help': () => print("Commands: help, clear, import gui [url], import program [name] [url], gui, neofetch"),
-            'clear': () => { output.innerHTML = ''; },
-            'neofetch': () => print("Opium OS v0.0.5\nStatus: Optimized\nUI Layer: Active"),
-            'import': async (args) => {
-                const type = args[0];
-                if (type === 'gui') {
-                    try {
-                        print(`Fetching GUI...`, "info");
-                        const res = await fetch(args[1]);
-                        OS_STATE.installedGui = await res.text();
-                        print(`GUI System Updated.`, "info");
-                    } catch (e) { print("Import failed: " + e.message, "error"); }
-                } else if (type === 'program') {
-                    const [name, url] = [args[1], args[2]];
-                    try {
-                        print(`Installing ${name}...`, "info");
-                        const res = await fetch(url);
-                        OS_STATE.programs[name] = await res.text();
-                        print(`'${name}' installed.`, "info");
-                        if(OS_STATE.isGuiRunning) window.dispatchEvent(new CustomEvent('opium_new_program', { detail: { name } }));
-                    } catch (e) { print("Install failed: " + e.message, "error"); }
+        function loadFiles() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", apiUrL, true);
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var files = JSON.parse(xhr.responseText);
+                        renderList(files);
+                    } else {
+                        statusElement.innerHTML = "Error loading files. Check username/repo settings.";
+                        statusElement.className = "error";
+                    }
                 }
-            },
-            'gui': () => {
-                if (!OS_STATE.installedGui) return print("No GUI installed.", "error");
-                guiLayer.innerHTML = OS_STATE.installedGui;
-                guiLayer.style.display = 'block';
-                OS_STATE.isGuiRunning = true;
+            };
+            xhr.send();
+        }
+
+        function renderList(files) {
+            var foundApk = false;
+            statusElement.style.display = "none";
+            
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
                 
-                const scripts = Array.from(guiLayer.querySelectorAll("script"));
-                scripts.forEach(oldScript => {
-                    const newScript = document.createElement("script");
-                    Array.from(oldScript.attributes).forEach(a => newScript.setAttribute(a.name, a.value));
-                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                });
-
-                Object.keys(OS_STATE.programs).forEach(name => {
-                    window.dispatchEvent(new CustomEvent('opium_new_program', { detail: { name } }));
-                });
+                // Only show files ending in .apk
+                if (file.name.toLowerCase().indexOf(".apk") !== -1) {
+                    foundApk = true;
+                    
+                    var li = document.createElement("li");
+                    li.className = "file-item";
+                    
+                    // Link to the raw file on GitHub for direct download
+                    var downloadUrl = "https://raw.githubusercontent.com/" + username + "/" + repo + "/main/" + file.name;
+                    
+                    li.innerHTML = 
+                        '<div class="file-link">' + file.name + '</div>' +
+                        '<a href="' + downloadUrl + '" class="download-btn">Download APK</a>';
+                    
+                    listElement.appendChild(li);
+                }
             }
-        };
 
-        window.OS = {
-            exitGui: () => {
-                guiLayer.style.display = 'none';
-                guiLayer.innerHTML = '';
-                OS_STATE.isGuiRunning = false;
-                print("GUI Session terminated.", "info");
-            },
-            runCommand: (cmd) => {
-                const parts = cmd.split(' ');
-                const base = parts[0].toLowerCase();
-                const args = parts.slice(1);
-                if (commands[base]) commands[base](args);
-                else if (OS_STATE.programs[base]) window.dispatchEvent(new CustomEvent('opium_run_program', { detail: { name: base, html: OS_STATE.programs[base] } }));
-                else print(`Unknown command: ${base}`, "error");
+            if (!foundApk) {
+                statusElement.style.display = "block";
+                statusElement.innerHTML = "No APK files found in the root directory.";
             }
-        };
+        }
 
-        input.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                const val = input.value;
-                input.value = '';
-                window.OS.runCommand(val);
-            }
-        });
+        // Run the script
+        window.onload = loadFiles;
     </script>
 </body>
 </html>
