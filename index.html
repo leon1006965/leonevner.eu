@@ -33,27 +33,27 @@
         }
         .file-item {
             border-bottom: 1px solid #eee;
-            padding: 12px 5px;
+            padding: 15px 5px;
         }
         .file-item:last-child {
             border-bottom: none;
         }
-        .file-link {
-            text-decoration: none;
-            color: #333;
+        .file-name {
             display: block;
             font-size: 16px;
             font-weight: bold;
+            word-break: break-all;
+            margin-bottom: 10px;
         }
         .download-btn {
             display: inline-block;
-            margin-top: 8px;
             background-color: #28a745;
             color: white;
-            padding: 8px 15px;
+            padding: 12px 20px;
             text-decoration: none;
             border-radius: 4px;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: bold;
         }
         #status {
             text-align: center;
@@ -64,6 +64,7 @@
         .error {
             color: red;
             text-align: center;
+            padding: 10px;
         }
     </style>
 </head>
@@ -71,39 +72,22 @@
 
     <div class="container">
         <h1>App Downloads</h1>
-        <div id="status">Scanning directory...</div>
+        <div id="status">Loading files from leonevner.eu...</div>
         <ul id="apk-list" class="file-list"></ul>
     </div>
 
     <script type="text/javascript">
-        // This script automatically detects your username and repo from the URL
-        // Example URL: https://username.github.io/repo-name/
-        
+        // --- FIXED CONFIGURATION FOR YOUR REPO ---
+        var GITHUB_USER = "leon1006965";
+        var GITHUB_REPO = "leonevner.eu";
+        var BRANCH = "main"; // Change to "master" if your repo uses the old default
+        // -----------------------------------------
+
         var listElement = document.getElementById("apk-list");
         var statusElement = document.getElementById("status");
 
-        function getRepoInfo() {
-            var host = window.location.hostname; // e.g., username.github.io
-            var path = window.location.pathname; // e.g., /repo-name/
-            
-            var user = host.split('.')[0];
-            var repo = path.split('/')[1];
-            
-            // Clean up repo name (remove trailing slashes or index.html)
-            if (!repo || repo === "index.html") {
-                // This might happen if the repo name is the same as the username (user.github.io)
-                repo = host; 
-            }
-
-            return {
-                user: user,
-                repo: repo
-            };
-        }
-
         function loadFiles() {
-            var info = getRepoInfo();
-            var apiUrL = "https://api.github.com/repos/" + info.user + "/" + info.repo + "/contents/";
+            var apiUrL = "https://api.github.com/repos/" + GITHUB_USER + "/" + GITHUB_REPO + "/contents/";
             
             var xhr = new XMLHttpRequest();
             xhr.open("GET", apiUrL, true);
@@ -112,9 +96,9 @@
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         var files = JSON.parse(xhr.responseText);
-                        renderList(files, info);
+                        renderList(files);
                     } else {
-                        statusElement.innerHTML = "Error: Could not list files automatically.<br>Make sure this is hosted on GitHub Pages.";
+                        statusElement.innerHTML = "Error " + xhr.status + ": Could not fetch file list.<br>Ensure the repository is Public.";
                         statusElement.className = "error";
                     }
                 }
@@ -122,24 +106,25 @@
             xhr.send();
         }
 
-        function renderList(files, info) {
+        function renderList(files) {
             var foundApk = false;
             statusElement.style.display = "none";
+            listElement.innerHTML = ""; 
             
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
-                
-                if (file.name.toLowerCase().indexOf(".apk") !== -1) {
+                // Check for .apk extension (case insensitive)
+                if (file.name.toLowerCase().substring(file.name.length - 4) === ".apk") {
                     foundApk = true;
                     
                     var li = document.createElement("li");
                     li.className = "file-item";
                     
-                    // Construct the download link using detected info
-                    var downloadUrl = "https://raw.githubusercontent.com/" + info.user + "/" + info.repo + "/main/" + file.name;
+                    // Direct download link from GitHub Raw
+                    var downloadUrl = "https://raw.githubusercontent.com/" + GITHUB_USER + "/" + GITHUB_REPO + "/" + BRANCH + "/" + file.name;
                     
                     li.innerHTML = 
-                        '<div class="file-link">' + file.name + '</div>' +
+                        '<span class="file-name">' + file.name + '</span>' +
                         '<a href="' + downloadUrl + '" class="download-btn">Download APK</a>';
                     
                     listElement.appendChild(li);
@@ -148,10 +133,11 @@
 
             if (!foundApk) {
                 statusElement.style.display = "block";
-                statusElement.innerHTML = "No APK files found in this repository.";
+                statusElement.innerHTML = "No APK files found in the root of the repository.";
             }
         }
 
+        // Start the process
         window.onload = loadFiles;
     </script>
 </body>
