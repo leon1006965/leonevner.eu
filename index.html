@@ -3,55 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Redirect</title>
+    <title>Grizzly Hub Redirect</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f0f12;
-            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            background-color: #121212;
+            font-family: Arial, sans-serif;
         }
-        .container {
-            text-align: center;
-            background: #1a1a1e;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        h1 {
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-        p {
-            color: #a0a0a0;
-            margin-bottom: 30px;
-        }
+
         .btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
             font-weight: bold;
-            border-radius: 6px;
-            transition: background 0.3s ease;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            text-decoration: none;
         }
+
         .btn:hover {
             background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Ready to Proceed?</h1>
-    <p>Click the button below to download the bootstrapper.</p>
-    <a href="https://getsolara.dev/download/static/files/BootstrapperNew.exe" class="btn">Continue</a>
-</div>
+    <a href="https://github.com/leon1006965/leonevner.eu/blob/main/grizzlyhub.lua" class="btn">
+        Launch Grizzly Hub
+    </a>
 
 </body>
 </html>
